@@ -282,13 +282,12 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "../schema/Todo.graphql", Input: `type TodoItem {
-  id: ID!
-  task: String!
-  is_completed: Boolean!
-}
+	{Name: "../schema/schema.graphql", Input: `type Query
 
-input TodoItemInput {
+type Mutation
+`, BuiltIn: false},
+	{Name: "../schema/todo.graphql", Input: `type TodoItem {
+  id: ID!
   task: String!
   is_completed: Boolean!
 }
@@ -307,6 +306,11 @@ extend type Mutation {
   deleteTodoItem(input: DeleteTodoByIdInput): DeleteTodoByIdResponse!
 }
 
+input TodoItemInput {
+  task: String!
+  is_completed: Boolean!
+}
+
 input UpdateTodoStatusInput {
   id: String!
   is_completed: Boolean!
@@ -323,10 +327,6 @@ input DeleteTodoByIdInput {
 type DeleteTodoByIdResponse {
   success: Boolean!
 }
-`, BuiltIn: false},
-	{Name: "../schema/schema.graphql", Input: `type Query
-
-type Mutation
 `, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
