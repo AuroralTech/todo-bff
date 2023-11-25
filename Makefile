@@ -10,4 +10,4 @@
 # gqlgenを実行する
 .PHONY: gql-gen
 gql-gen:
-	go run github.com/99designs/gqlgen generate
+	go get github.com/99designs/gqlgen@v0.17.40 && go run github.com/99designs/gqlgen generate
