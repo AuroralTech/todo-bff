@@ -6,3 +6,8 @@
 # .PHONY: factory-get
 # factory-get:
 # 	go get github.com/panforyou/factory/sdk/factory/go/factory_pb@$(BRANCH_NAME)
+
+# gqlgenを実行する
+.PHONY: gql-gen
+gql-gen:
+	go run github.com/99designs/gqlgen generate

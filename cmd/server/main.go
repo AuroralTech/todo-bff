@@ -6,6 +6,11 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/AuroralTech/todo-bff/pkg/graph"
+	"github.com/AuroralTech/todo-bff/pkg/graph/generated"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -24,15 +29,24 @@ func main() {
 	}
 	defer conn.Close()
 
-	// 3.HTTPサーバーの設定
+	// 3.GraphQLスキーマの定義
+
+	// 4.GraphQLハンドラの作成
+	srv := handler.NewDefaultServer(
+		generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}),
+	)
+
+	// 5.HTTPサーバーの設定
+	http.Handle("/graphql", srv)
+	http.Handle("/playground", playground.Handler("GraphQL playground", "/graphql"))
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("BFF Server is running"))
 	})
 
-	// 4.サーバーのポートを設定
+	// 6.サーバーのポートを設定
 	port := 4000
 
-	// 5.HTTPサーバーの起動
+	// 7.HTTPサーバーの起動
 	log.Printf("connect to http://localhost:%d/ for GraphQL playground", port)
 	if err := http.ListenAndServe(":"+strconv.Itoa(port), nil); err != nil {
 		log.Fatalf("failed to start HTTP server: %v", err)
