@@ -10,6 +10,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
+	"github.com/AuroralTech/todo-bff/pkg/graph/model"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -32,13 +33,26 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	Mutation() MutationResolver
+	Query() QueryResolver
 }
 
 type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	DeleteTodoByIdResponse struct {
+		Success func(childComplexity int) int
+	}
+
+	Mutation struct {
+		AddTodo          func(childComplexity int, input model.TodoItemInput) int
+		DeleteTodoItem   func(childComplexity int, input *model.DeleteTodoByIDInput) int
+		UpdateTodoStatus func(childComplexity int, input *model.UpdateTodoStatusInput) int
+	}
+
 	Query struct {
+		TodoList func(childComplexity int) int
 	}
 
 	TodoItem struct {
@@ -49,6 +63,10 @@ type ComplexityRoot struct {
 
 	TodoList struct {
 		Items func(childComplexity int) int
+	}
+
+	UpdateTodoStatusResponse struct {
+		Success func(childComplexity int) int
 	}
 }
 
@@ -70,6 +88,56 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e, 0, 0, nil}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "DeleteTodoByIdResponse.success":
+		if e.complexity.DeleteTodoByIdResponse.Success == nil {
+			break
+		}
+
+		return e.complexity.DeleteTodoByIdResponse.Success(childComplexity), true
+
+	case "Mutation.addTodo":
+		if e.complexity.Mutation.AddTodo == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addTodo_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddTodo(childComplexity, args["input"].(model.TodoItemInput)), true
+
+	case "Mutation.deleteTodoItem":
+		if e.complexity.Mutation.DeleteTodoItem == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteTodoItem_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteTodoItem(childComplexity, args["input"].(*model.DeleteTodoByIDInput)), true
+
+	case "Mutation.updateTodoStatus":
+		if e.complexity.Mutation.UpdateTodoStatus == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateTodoStatus_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateTodoStatus(childComplexity, args["input"].(*model.UpdateTodoStatusInput)), true
+
+	case "Query.todoList":
+		if e.complexity.Query.TodoList == nil {
+			break
+		}
+
+		return e.complexity.Query.TodoList(childComplexity), true
 
 	case "TodoItem.id":
 		if e.complexity.TodoItem.ID == nil {
@@ -99,6 +167,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.TodoList.Items(childComplexity), true
 
+	case "UpdateTodoStatusResponse.success":
+		if e.complexity.UpdateTodoStatusResponse.Success == nil {
+			break
+		}
+
+		return e.complexity.UpdateTodoStatusResponse.Success(childComplexity), true
+
 	}
 	return 0, false
 }
@@ -106,7 +181,11 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e, 0, 0, make(chan graphql.DeferredResult)}
-	inputUnmarshalMap := graphql.BuildUnmarshalerMap()
+	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputDeleteTodoByIdInput,
+		ec.unmarshalInputTodoItemInput,
+		ec.unmarshalInputUpdateTodoStatusInput,
+	)
 	first := true
 
 	switch rc.Operation.Operation {
@@ -139,6 +218,21 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 			}
 
 			return &response
+		}
+	case ast.Mutation:
+		return func(ctx context.Context) *graphql.Response {
+			if !first {
+				return nil
+			}
+			first = false
+			ctx = graphql.WithUnmarshalerMap(ctx, inputUnmarshalMap)
+			data := ec._Mutation(ctx, rc.Operation.SelectionSet)
+			var buf bytes.Buffer
+			data.MarshalGQL(&buf)
+
+			return &graphql.Response{
+				Data: buf.Bytes(),
+			}
 		}
 
 	default:
@@ -194,9 +288,45 @@ var sources = []*ast.Source{
   is_completed: Boolean!
 }
 
+input TodoItemInput {
+  task: String!
+  is_completed: Boolean!
+}
+
 type TodoList {
   items: [TodoItem!]!
 }
+
+extend type Query {
+  todoList: TodoList!
+}
+
+extend type Mutation {
+  addTodo(input: TodoItemInput!): TodoItem!
+  updateTodoStatus(input: UpdateTodoStatusInput): UpdateTodoStatusResponse!
+  deleteTodoItem(input: DeleteTodoByIdInput): DeleteTodoByIdResponse!
+}
+
+input UpdateTodoStatusInput {
+  id: String!
+  is_completed: Boolean!
+}
+
+type UpdateTodoStatusResponse {
+  success: Boolean!
+}
+
+input DeleteTodoByIdInput {
+  id: String!
+}
+
+type DeleteTodoByIdResponse {
+  success: Boolean!
+}
+`, BuiltIn: false},
+	{Name: "../schema/schema.graphql", Input: `type Query
+
+type Mutation
 `, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)

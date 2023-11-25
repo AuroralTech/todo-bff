@@ -2,12 +2,34 @@
 
 package model
 
+type DeleteTodoByIDInput struct {
+	ID string `json:"id"`
+}
+
+type DeleteTodoByIDResponse struct {
+	Success bool `json:"success"`
+}
+
 type TodoItem struct {
 	ID          string `json:"id"`
 	Task        string `json:"task"`
 	IsCompleted bool   `json:"is_completed"`
 }
 
+type TodoItemInput struct {
+	Task        string `json:"task"`
+	IsCompleted bool   `json:"is_completed"`
+}
+
 type TodoList struct {
 	Items []*TodoItem `json:"items"`
+}
+
+type UpdateTodoStatusInput struct {
+	ID          string `json:"id"`
+	IsCompleted bool   `json:"is_completed"`
+}
+
+type UpdateTodoStatusResponse struct {
+	Success bool `json:"success"`
 }

@@ -29,6 +29,50 @@ import (
 
 // region    **************************** field.gotpl *****************************
 
+func (ec *executionContext) _DeleteTodoByIdResponse_success(ctx context.Context, field graphql.CollectedField, obj *model.DeleteTodoByIDResponse) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DeleteTodoByIdResponse_success(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Success, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DeleteTodoByIdResponse_success(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DeleteTodoByIdResponse",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _TodoItem_id(ctx context.Context, field graphql.CollectedField, obj *model.TodoItem) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_TodoItem_id(ctx, field)
 	if err != nil {
@@ -213,9 +257,158 @@ func (ec *executionContext) fieldContext_TodoList_items(ctx context.Context, fie
 	return fc, nil
 }
 
+func (ec *executionContext) _UpdateTodoStatusResponse_success(ctx context.Context, field graphql.CollectedField, obj *model.UpdateTodoStatusResponse) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UpdateTodoStatusResponse_success(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Success, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UpdateTodoStatusResponse_success(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UpdateTodoStatusResponse",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 // endregion **************************** field.gotpl *****************************
 
 // region    **************************** input.gotpl *****************************
+
+func (ec *executionContext) unmarshalInputDeleteTodoByIdInput(ctx context.Context, obj interface{}) (model.DeleteTodoByIDInput, error) {
+	var it model.DeleteTodoByIDInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"id"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputTodoItemInput(ctx context.Context, obj interface{}) (model.TodoItemInput, error) {
+	var it model.TodoItemInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"task", "is_completed"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "task":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("task"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Task = data
+		case "is_completed":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("is_completed"))
+			data, err := ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsCompleted = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpdateTodoStatusInput(ctx context.Context, obj interface{}) (model.UpdateTodoStatusInput, error) {
+	var it model.UpdateTodoStatusInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"id", "is_completed"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "is_completed":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("is_completed"))
+			data, err := ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsCompleted = data
+		}
+	}
+
+	return it, nil
+}
 
 // endregion **************************** input.gotpl *****************************
 
@@ -224,6 +417,45 @@ func (ec *executionContext) fieldContext_TodoList_items(ctx context.Context, fie
 // endregion ************************** interface.gotpl ***************************
 
 // region    **************************** object.gotpl ****************************
+
+var deleteTodoByIdResponseImplementors = []string{"DeleteTodoByIdResponse"}
+
+func (ec *executionContext) _DeleteTodoByIdResponse(ctx context.Context, sel ast.SelectionSet, obj *model.DeleteTodoByIDResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, deleteTodoByIdResponseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DeleteTodoByIdResponse")
+		case "success":
+			out.Values[i] = ec._DeleteTodoByIdResponse_success(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
 
 var todoItemImplementors = []string{"TodoItem"}
 
@@ -313,9 +545,66 @@ func (ec *executionContext) _TodoList(ctx context.Context, sel ast.SelectionSet,
 	return out
 }
 
+var updateTodoStatusResponseImplementors = []string{"UpdateTodoStatusResponse"}
+
+func (ec *executionContext) _UpdateTodoStatusResponse(ctx context.Context, sel ast.SelectionSet, obj *model.UpdateTodoStatusResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, updateTodoStatusResponseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UpdateTodoStatusResponse")
+		case "success":
+			out.Values[i] = ec._UpdateTodoStatusResponse_success(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 // endregion **************************** object.gotpl ****************************
 
 // region    ***************************** type.gotpl *****************************
+
+func (ec *executionContext) marshalNDeleteTodoByIdResponse2githubᚗcomᚋAuroralTechᚋtodoᚑbffᚋpkgᚋgraphᚋmodelᚐDeleteTodoByIDResponse(ctx context.Context, sel ast.SelectionSet, v model.DeleteTodoByIDResponse) graphql.Marshaler {
+	return ec._DeleteTodoByIdResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNDeleteTodoByIdResponse2ᚖgithubᚗcomᚋAuroralTechᚋtodoᚑbffᚋpkgᚋgraphᚋmodelᚐDeleteTodoByIDResponse(ctx context.Context, sel ast.SelectionSet, v *model.DeleteTodoByIDResponse) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._DeleteTodoByIdResponse(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNTodoItem2githubᚗcomᚋAuroralTechᚋtodoᚑbffᚋpkgᚋgraphᚋmodelᚐTodoItem(ctx context.Context, sel ast.SelectionSet, v model.TodoItem) graphql.Marshaler {
+	return ec._TodoItem(ctx, sel, &v)
+}
 
 func (ec *executionContext) marshalNTodoItem2ᚕᚖgithubᚗcomᚋAuroralTechᚋtodoᚑbffᚋpkgᚋgraphᚋmodelᚐTodoItemᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.TodoItem) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
@@ -369,6 +658,55 @@ func (ec *executionContext) marshalNTodoItem2ᚖgithubᚗcomᚋAuroralTechᚋtod
 		return graphql.Null
 	}
 	return ec._TodoItem(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNTodoItemInput2githubᚗcomᚋAuroralTechᚋtodoᚑbffᚋpkgᚋgraphᚋmodelᚐTodoItemInput(ctx context.Context, v interface{}) (model.TodoItemInput, error) {
+	res, err := ec.unmarshalInputTodoItemInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNTodoList2githubᚗcomᚋAuroralTechᚋtodoᚑbffᚋpkgᚋgraphᚋmodelᚐTodoList(ctx context.Context, sel ast.SelectionSet, v model.TodoList) graphql.Marshaler {
+	return ec._TodoList(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNTodoList2ᚖgithubᚗcomᚋAuroralTechᚋtodoᚑbffᚋpkgᚋgraphᚋmodelᚐTodoList(ctx context.Context, sel ast.SelectionSet, v *model.TodoList) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._TodoList(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNUpdateTodoStatusResponse2githubᚗcomᚋAuroralTechᚋtodoᚑbffᚋpkgᚋgraphᚋmodelᚐUpdateTodoStatusResponse(ctx context.Context, sel ast.SelectionSet, v model.UpdateTodoStatusResponse) graphql.Marshaler {
+	return ec._UpdateTodoStatusResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNUpdateTodoStatusResponse2ᚖgithubᚗcomᚋAuroralTechᚋtodoᚑbffᚋpkgᚋgraphᚋmodelᚐUpdateTodoStatusResponse(ctx context.Context, sel ast.SelectionSet, v *model.UpdateTodoStatusResponse) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._UpdateTodoStatusResponse(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalODeleteTodoByIdInput2ᚖgithubᚗcomᚋAuroralTechᚋtodoᚑbffᚋpkgᚋgraphᚋmodelᚐDeleteTodoByIDInput(ctx context.Context, v interface{}) (*model.DeleteTodoByIDInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputDeleteTodoByIdInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOUpdateTodoStatusInput2ᚖgithubᚗcomᚋAuroralTechᚋtodoᚑbffᚋpkgᚋgraphᚋmodelᚐUpdateTodoStatusInput(ctx context.Context, v interface{}) (*model.UpdateTodoStatusInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputUpdateTodoStatusInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 // endregion ***************************** type.gotpl *****************************

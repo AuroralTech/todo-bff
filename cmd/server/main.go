@@ -6,8 +6,11 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/graphql-go/graphql"
-	"github.com/graphql-go/handler"
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/AuroralTech/todo-bff/pkg/graph"
+	"github.com/AuroralTech/todo-bff/pkg/graph/generated"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -27,30 +30,15 @@ func main() {
 	defer conn.Close()
 
 	// 3.GraphQLスキーマの定義
-	fields := graphql.Fields{
-		"hello": &graphql.Field{
-			Type: graphql.String,
-			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				return "world", nil
-			},
-		},
-	}
-	rootQuery := graphql.ObjectConfig{Name: "RootQuery", Fields: fields}
-	schemaConfig := graphql.SchemaConfig{Query: graphql.NewObject(rootQuery)}
-	schema, err := graphql.NewSchema(schemaConfig)
-	if err != nil {
-		log.Fatalf("failed to create new GraphQL schema, error: %v", err)
-	}
 
 	// 4.GraphQLハンドラの作成
-	h := handler.New(&handler.Config{
-		Schema:     &schema,
-		Pretty:     true,
-		Playground: true,
-	})
+	srv := handler.NewDefaultServer(
+		generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}),
+	)
 
 	// 5.HTTPサーバーの設定
-	http.Handle("/graphql", h)
+	http.Handle("/graphql", srv)
+	http.Handle("/playground", playground.Handler("GraphQL playground", "/graphql"))
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("BFF Server is running"))
 	})

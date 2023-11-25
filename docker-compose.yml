@@ -8,6 +8,6 @@ services:
     environment:
       GRPC_ENDPOINT: ${GRPC_ENDPOINT}
     ports:
-      - 4040:4000
+      - 4000:4000
     volumes:
       - ./:/go/src/app # マウントディレクトリ
