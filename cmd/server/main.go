@@ -8,6 +8,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/AuroralTech/todo-bff/pkg/graph/client"
 	"github.com/rs/cors"
 
 	graph "github.com/AuroralTech/todo-bff/pkg/graph/generated"
@@ -37,7 +38,9 @@ func main() {
 	// 4.GraphQLハンドラの作成
 	srv := handler.NewDefaultServer(
 		graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{
-			TodoClient: todoClient,
+			Client: &client.Client{
+				TodoClient: todoClient,
+			},
 		}}),
 	)
 
