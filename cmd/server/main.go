@@ -9,6 +9,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/AuroralTech/todo-bff/pkg/graph/client"
+	"github.com/rs/cors"
 
 	graph "github.com/AuroralTech/todo-bff/pkg/graph/generated"
 	pb "github.com/AuroralTech/todo-bff/pkg/grpc/generated"
@@ -46,13 +47,19 @@ func main() {
 	// 5.HTTPサーバーの設定
 	http.Handle("/graphql", srv)
 	http.Handle("/", playground.Handler("GraphQL playground", "/graphql"))
-
+	// CORS設定の追加
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"}, // すべてのオリジンを許可
+		AllowCredentials: true,
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
+	})
+	handler := c.Handler(http.DefaultServeMux)
 	// 6.サーバーのポートを設定
 	port := 4000
 
 	// 7.HTTPサーバーの起動
 	log.Printf("connect to http://localhost:%d/ for GraphQL playground", port)
-	if err := http.ListenAndServe(":"+strconv.Itoa(port), nil); err != nil {
+	if err := http.ListenAndServe(":"+strconv.Itoa(port), handler); err != nil {
 		log.Fatalf("failed to start HTTP server: %v", err)
 	}
 }
