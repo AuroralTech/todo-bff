@@ -38,10 +38,7 @@ func main() {
 
 	// 5.HTTPサーバーの設定
 	http.Handle("/graphql", srv)
-	http.Handle("/playground", playground.Handler("GraphQL playground", "/graphql"))
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("BFF Server is running"))
-	})
+	http.Handle("/", playground.Handler("GraphQL playground", "/graphql"))
 
 	// 6.サーバーのポートを設定
 	port := 4000

@@ -1,3 +1,6 @@
 [submodule "pkg/graph/schema"]
 	path = pkg/graph/schema
 	url = https://github.com/AuroralTech/todo-schema.git
+[submodule "pkg/proto"]
+	path = pkg/proto
+	url = https://github.com/AuroralTech/todo-proto.git
