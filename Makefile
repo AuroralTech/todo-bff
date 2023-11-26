@@ -17,3 +17,8 @@ protoc-lint:
 .PHONY: protoc-update
 protoc-update:
 	buf mod update
+
+# ネットワークの作成(ローカルでホストPCから1回だけ実行する)
+.PHONY: create-network
+create-network:
+	docker network create bff_grpc_network

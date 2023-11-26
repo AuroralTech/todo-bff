@@ -6,27 +6,77 @@ package graph
 
 import (
 	"context"
-	"fmt"
+	"strconv"
 
 	"github.com/AuroralTech/todo-bff/pkg/graph/generated/model"
+	pb "github.com/AuroralTech/todo-bff/pkg/grpc/generated"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 // AddTodo is the resolver for the addTodo field.
 func (r *mutationResolver) AddTodo(ctx context.Context, input model.TodoItemInput) (*model.TodoItem, error) {
-	panic(fmt.Errorf("not implemented: AddTodo - addTodo"))
+	resp, err := r.TodoClient.AddTodo(ctx, &pb.TodoItem{
+		Task:        input.Task,
+		IsCompleted: input.IsCompleted,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.TodoItem{
+		ID:          strconv.FormatUint(resp.Id, 10),
+		Task:        resp.Task,
+		IsCompleted: resp.IsCompleted,
+	}, nil
 }
 
 // UpdateTodoStatus is the resolver for the updateTodoStatus field.
 func (r *mutationResolver) UpdateTodoStatus(ctx context.Context, input *model.UpdateTodoStatusInput) (*model.UpdateTodoStatusResponse, error) {
-	panic(fmt.Errorf("not implemented: UpdateTodoStatus - updateTodoStatus"))
+	resp, err := r.TodoClient.UpdateTodoStatus(ctx, &pb.UpdateTodoStatusRequest{
+		Id:          input.ID,
+		IsCompleted: input.IsCompleted,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &model.UpdateTodoStatusResponse{
+		Success: resp.Success,
+	}, nil
 }
 
 // DeleteTodoItem is the resolver for the deleteTodoItem field.
 func (r *mutationResolver) DeleteTodoItem(ctx context.Context, input *model.DeleteTodoByIDInput) (*model.DeleteTodoByIDResponse, error) {
-	panic(fmt.Errorf("not implemented: DeleteTodoItem - deleteTodoItem"))
+	resp, err := r.TodoClient.DeleteTodoById(ctx, &pb.DeleteTodoByIdRequest{
+		Id: input.ID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.DeleteTodoByIDResponse{
+		Success: resp.Success,
+	}, nil
 }
 
 // TodoList is the resolver for the todoList field.
 func (r *queryResolver) TodoList(ctx context.Context) (*model.TodoList, error) {
-	panic(fmt.Errorf("not implemented: TodoList - todoList"))
+	resp, err := r.TodoClient.GetTodoList(ctx, &emptypb.Empty{})
+	if err != nil {
+		return nil, err
+	}
+	items := func() []*model.TodoItem {
+		items := make([]*model.TodoItem, len(resp.Items))
+		for i, item := range resp.Items {
+			items[i] = &model.TodoItem{
+				ID:          strconv.FormatUint(item.Id, 10),
+				Task:        item.Task,
+				IsCompleted: item.IsCompleted,
+			}
+		}
+		return items
+	}()
+
+	return &model.TodoList{
+		Items: items,
+	}, nil
 }

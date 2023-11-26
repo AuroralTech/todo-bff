@@ -11,3 +11,8 @@ services:
       - 4000:4000
     volumes:
       - ./:/go/src/app # マウントディレクトリ
+    networks:
+      - bff_grpc_network
+networks:
+  bff_grpc_network:
+    external: true
