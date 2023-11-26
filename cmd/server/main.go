@@ -8,8 +8,9 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/AuroralTech/todo-bff/pkg/graph"
-	"github.com/AuroralTech/todo-bff/pkg/graph/generated"
+
+	graph "github.com/AuroralTech/todo-bff/pkg/graph/generated"
+	pb "github.com/AuroralTech/todo-bff/pkg/grpc/generated"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -29,11 +30,14 @@ func main() {
 	}
 	defer conn.Close()
 
-	// 3.GraphQLスキーマの定義
+	// gRPCクライアントの作成
+	todoClient := pb.NewTodoServiceClient(conn)
 
 	// 4.GraphQLハンドラの作成
 	srv := handler.NewDefaultServer(
-		generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}),
+		graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{
+			TodoClient: todoClient,
+		}}),
 	)
 
 	// 5.HTTPサーバーの設定

@@ -8,7 +8,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AuroralTech/todo-bff/pkg/graph/model"
+	"github.com/AuroralTech/todo-bff/pkg/graph/generated/model"
 )
 
 // AddTodo is the resolver for the addTodo field.
