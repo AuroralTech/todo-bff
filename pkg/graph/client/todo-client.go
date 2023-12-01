@@ -10,6 +10,7 @@ import (
 )
 
 func (c *Client) AddTodo(ctx context.Context, input model.TodoItemInput) (*model.TodoItem, error) {
+	ctx = SetTokenMetadata(ctx)
 	resp, err := c.TodoClient.AddTodo(ctx, &pb.TodoItem{
 		Task:        input.Task,
 		IsCompleted: input.IsCompleted,
