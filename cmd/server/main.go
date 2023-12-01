@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
@@ -17,6 +18,13 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
+
+func requestContextMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), "httpRequest", r)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
 
 func main() {
 	// 1.gRPCサーバーのエンドポイントを環境変数から取得
@@ -45,7 +53,7 @@ func main() {
 	)
 
 	// 5.HTTPサーバーの設定
-	http.Handle("/graphql", srv)
+	http.Handle("/graphql", requestContextMiddleware(srv))
 	http.Handle("/", playground.Handler("GraphQL playground", "/graphql"))
 	// CORS設定の追加
 	c := cors.New(cors.Options{
